@@ -8,6 +8,10 @@ router.post('/', (req, res) => {
   res.send('browser coin handshake!')
 })
 
+router.get('/requested', (req, res) => {
+  res.send(queuedHandshakes)
+})
+
 module.exports = {
   router,
   queuedHandshakes

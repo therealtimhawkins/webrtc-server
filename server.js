@@ -8,8 +8,9 @@ app.use(express.json())
 
 const {
   router: handshake
-} = require('./handshake.router')
+} = require('./src/router/handshake.router')
 app.use('/handshake', handshake)
+
 
 server = app.listen(port, () => {
   console.log('Peer server running on port: ' + port)
