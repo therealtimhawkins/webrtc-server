@@ -4,8 +4,13 @@ const router = express.Router()
 const queuedHandshakes = []
 
 router.post('/', (req, res) => {
-  queuedHandshakes.push(JSON.parse(req.body.handshake))
-  res.send('browser coin handshake!')
+  const handshake = req.body.handshake
+  const alreadyQueued = queuedHandshakes.includes(handshake)
+  if (!alreadyQueued) {
+    queuedHandshakes.push(req.body.handshake)
+    res.send(200, 'Handshake queued.')
+  }
+  res.send(409, 'Handshake already in the queue.')
 })
 
 router.get('/requested', (req, res) => {
