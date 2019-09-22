@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const {
+  remove
+} = require('lodash')
 
 const queuedHandshakes = []
 
@@ -15,6 +18,12 @@ router.post('/', (req, res) => {
 
 router.get('/requested', (req, res) => {
   res.send(queuedHandshakes)
+})
+
+router.delete('/delete', (req, res) => {
+  const result = remove(queuedHandshakes, (handshake) => {
+    return handshake = req.body.handshake
+  })
 })
 
 module.exports = {
