@@ -9,7 +9,7 @@ router.post('/', (req, res) => {
   const handshake = req.body
 
   const index = findIndex(queuedHandshakes, queuedHandshake => {
-    return queuedHandshake.id === handshake.id
+    return queuedHandshake.requestId === handshake.requestId
   })
 
   if (index < 0) {
@@ -35,14 +35,16 @@ router.post('/response', (req, res) => {
   }
 })
 
-router.get('/response', (req, res) => {
+router.get('/response/:id', (req, res) => {
   const index = findIndex(handshakeResponses, handshake => {
-    return handshake.id === req.body.id
+    return handshake.requestId === req.params.id
   })
   if (index >= 0) {
-    res.status(200).send(handshakeResponses[index])
+    const handshake = handshakeResponses[index]
+    handshakeResponses.splice(index, 1)
+    res.status(200).send(handshake)
   } else {
-    res.status(404).send('Handshake response not found.')
+    res.status(200).send({})
   }
 })
 
@@ -51,7 +53,7 @@ router.get('/queued', (req, res) => {
   if (handshake) {
     res.status(200).send(handshake)
   } else {
-    res.status(404).send('No hanshakes in the queue.')
+    res.status(200).send({})
   }
 })
 

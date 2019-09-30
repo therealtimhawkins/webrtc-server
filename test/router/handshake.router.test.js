@@ -6,7 +6,7 @@ describe('POST /handshake', () => {
     request(app)
       .post('/handshake')
       .send({
-        id: 'testid',
+        requestId: 'testid',
         handshake: { message: 'testhandshake' }
       })
       .then(response => {
@@ -21,7 +21,7 @@ describe('POST /handshake/response', () => {
     request(app)
       .post('/handshake/response')
       .send({
-        id: 'testid',
+        requestId: 'testid',
         handshake: { message: 'testhandshake' },
         resopnseId: 'testResponseId',
         handshakeResponse: { message: 'testHandhakeResponse' }
@@ -36,7 +36,7 @@ describe('POST /handshake/response', () => {
     request(app)
       .post('/handshake/response')
       .send({
-        id: 'testid',
+        requestId: 'testid',
         handshake: { message: 'testhandshake' },
         resopnseId: 'testResponseId',
         handshakeResponse: { message: 'testHandhakeResponse' }
@@ -51,7 +51,7 @@ describe('POST /handshake/response', () => {
     request(app)
       .post('/handshake')
       .send({
-        id: 'testid',
+        requestId: 'testid',
         handshake: { message: 'testhandshake' }
       })
       .then(response => {
@@ -64,14 +64,11 @@ describe('POST /handshake/response', () => {
 describe('GET /handshake/response', () => {
   test('It should return first queued handshake', done => {
     request(app)
-      .get('/handshake/response')
-      .send({
-        id: 'testid'
-      })
+      .get('/handshake/response/testid')
       .then(response => {
         expect(response.statusCode).toBe(200)
         expect(response.body).toMatchObject({
-          id: 'testid',
+          requestId: 'testid',
           handshake: { message: 'testhandshake' }
         })
         done()
@@ -86,18 +83,19 @@ describe('GET /handshake/queued', () => {
       .then(response => {
         expect(response.statusCode).toBe(200)
         expect(response.body).toMatchObject({
-          id: 'testid',
+          requestId: 'testid',
           handshake: { message: 'testhandshake' }
         })
         done()
       })
   })
 
-  test('It should return error if queue is empty', done => {
+  test('It should return empty object if queue is empty', done => {
     request(app)
       .get('/handshake/queued')
       .then(response => {
-        expect(response.statusCode).toBe(404)
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toMatchObject({})
         done()
       })
   })
