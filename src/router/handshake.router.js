@@ -39,11 +39,20 @@ router.get('/response', (req, res) => {
   const index = findIndex(handshakeResponses, handshake => {
     return handshake.id === req.body.id
   })
-  res.send(handshakeResponses[index])
+  if (index >= 0) {
+    res.status(200).send(handshakeResponses[index])
+  } else {
+    res.status(404).send('Handshake response not found.')
+  }
 })
 
 router.get('/queued', (req, res) => {
-  res.send(queuedHandshakes.pop())
+  const handshake = queuedHandshakes.pop()
+  if (handshake) {
+    res.status(200).send(handshake)
+  } else {
+    res.status(404).send('No hanshakes in the queue.')
+  }
 })
 
 router.delete('/delete', (req, res) => {

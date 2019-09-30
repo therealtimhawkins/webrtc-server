@@ -92,4 +92,13 @@ describe('GET /handshake/queued', () => {
         done()
       })
   })
+
+  test('It should return error if queue is empty', done => {
+    request(app)
+      .get('/handshake/queued')
+      .then(response => {
+        expect(response.statusCode).toBe(404)
+        done()
+      })
+  })
 })
