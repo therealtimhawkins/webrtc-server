@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { remove, findIndex } = require('lodash')
+const { remove, findIndex, get } = require('lodash')
 
 const queuedHandshakes = []
 const handshakeResponses = []
@@ -14,9 +14,9 @@ router.post('/', (req, res) => {
 
   if (index < 0) {
     queuedHandshakes.push(handshake)
-    res.status(200).send('Handshake queued.')
+    res.status(200).send({ message: 'Handshake queued.' })
   } else {
-    res.status(409).send('Handshake already in the queue.')
+    res.status(409).send({ message: 'Handshake already in the queue.' })
   }
 })
 
@@ -29,37 +29,28 @@ router.post('/response', (req, res) => {
 
   if (index < 0) {
     handshakeResponses.push(handshake)
-    res.status(200).send('Handshake response added.')
+    res.status(200).send({ message: 'Handshake response added.' })
   } else {
-    res.status(409).send('Handshake response already in the queue.')
+    res
+      .status(409)
+      .send({ message: 'Handshake response already in the queue.' })
   }
 })
 
-router.get('/response/:id', (req, res) => {
-  const index = findIndex(handshakeResponses, handshake => {
-    return handshake.requestId === req.params.id
-  })
-  if (index >= 0) {
-    const handshake = handshakeResponses[index]
-    handshakeResponses.splice(index, 1)
-    res.status(200).send(handshake)
-  } else {
-    res.status(200).send({})
-  }
-})
-
-router.get('/queued', (req, res) => {
+router.get('/queued/:id', (req, res) => {
   const handshake = queuedHandshakes.pop()
-  if (handshake) {
+  const handshakeId = get(handshake, 'requestId')
+  if (handshakeId !== req.params.id) {
     res.status(200).send(handshake)
   } else {
+    queuedHandshakes.unshift(handshake)
     res.status(200).send({})
   }
 })
 
 router.delete('/delete', (req, res) => {
   const result = remove(queuedHandshakes, handshake => {
-    return (handshake = req.body.handshake)
+    return handshake === req.body.handshake
   })
 })
 
